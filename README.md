@@ -1,1 +1,1 @@
-# Diabetes-prediction-using-machine-learning (female)
+# Diabetes-prediction-using-machine-learning (female Only)
