@@ -13,27 +13,42 @@
 
 
 
+<h3>Model Training:</h3>
+<ul>
+  <li>The script reads a dataset ('diabetes.csv') and splits it into training and testing sets.</li>
+  <ls>The SVM classifier is trained on the training set and saved to a file using pickle.</ls>
+</ul>
 
 
-Model Training:
+<h3>Prediction Functionality:</h3>
+<ul>
+  <li>The predict function creates a new window with input fields for relevant health parameters.</li>
+  <li>Upon entering the values and clicking the "Predict" button, the SVM model predicts whether the person is diabetic or not.</li>
+  <li>The result is displayed along with an option to make another prediction.</li>
+</ul>
 
-The script reads a dataset ('diabetes.csv') and splits it into training and testing sets.
-The SVM classifier is trained on the training set and saved to a file using pickle.
-Prediction Functionality:
 
-The predict function creates a new window with input fields for relevant health parameters.
-Upon entering the values and clicking the "Predict" button, the SVM model predicts whether the person is diabetic or not.
-The result is displayed along with an option to make another prediction.
-File Paths:
+<h3>File Paths:</h3>
+<ul>
+  <li>Paths for images ('DIABTIES/Dib.jpg') and the saved SVM model ('diabetes_svm_model.pkl').</li>
+</ul>
 
-Paths for images ('DIABTIES/Dib.jpg') and the saved SVM model ('diabetes_svm_model.pkl').
-User Interaction:
 
-The main window provides a button ("Check Now!") to initiate the prediction process.
-A warning label indicates that the application is intended for females only.
-Scalability:
+<h3>User Interaction:</h3>
+<ul>
+  <li>The main window provides a button ("Check Now!") to initiate the prediction process.</li>
+  <li>A warning label indicates that the application is intended for females only.</li>
+</ul>
 
-The project can be extended by incorporating additional features, improving the model, and enhancing the GUI for better user experience.
+
+<h3>Scalability:</h3>
+<ul>
+  <li>The project can be extended by incorporating additional features, improving the model, and enhancing the GUI for better user experience.</li>
+
+</ul>
+
+
+
 Note:
 
 It's important to note that for a real-world application, thorough validation, testing, and consideration of ethical implications are crucial, especially in the context of health-related predictions.
