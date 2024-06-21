@@ -1,4 +1,4 @@
-# Diabetes-prediction (female Only)
+# Diabetes-prediction
 
 <h2>Objective:</h2>
 <p>The primary goal is to predict whether a person is diabetic or not based on input features related to health and medical history.</p>
