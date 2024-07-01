@@ -1,147 +1,106 @@
 from tkinter import *
+from tkinter import messagebox
 from PIL import Image, ImageTk
 import pandas as pd
 import numpy as np
 from sklearn.preprocessing import StandardScaler
 from sklearn.model_selection import train_test_split
 from sklearn import svm
+from sklearn.metrics import accuracy_score
 import pickle
 
-# File paths
-IMAGE_PATH = 'C:/Users/dhurv/PycharmProjects/aiproject/DIABTIES/Dib.jpg'
+IMAGE_PATH = 'C:/Users/dhurv/Desktop/pythonProjects/project1/DIABTIES/Dib.jpg'
 MODEL_PATH = 'diabetes_svm_model.pkl'
 
+dataframe = pd.read_csv("diabetes.csv")
+X = dataframe.drop(columns='Outcome', axis=1)
+Y = dataframe['Outcome']
 
-def save_model(classifier, file_path):
-    # Save the trained model to a file using pickle
-    with open(file_path, 'wb') as model_file:
-        pickle.dump(classifier, model_file)
+scaler = StandardScaler()
+scaler.fit(X)
+std_data = scaler.transform(X)
+X_train, X_test, Y_train, Y_test = train_test_split(std_data, Y, test_size=0.2, stratify=Y, random_state=2)
 
+classifier = svm.SVC(kernel='linear')
+classifier.fit(X_train, Y_train)
+
+with open(MODEL_PATH, 'wb') as model_file:
+    pickle.dump(classifier, model_file)
 
 def load_model(file_path):
-    # Load the saved model for predictions
     with open(file_path, 'rb') as model_file:
         loaded_classifier = pickle.load(model_file)
     return loaded_classifier
 
-
 def prediction(d, Pregnancies, Glucose, BloodPressure, SkinThickness, Insulin, BMI, DiabetesPedigreeFunction, Age):
-    dataframe = pd.read_csv("diabetes.csv")
-    X = dataframe.drop(columns='Outcome', axis=1)
-    Y = dataframe['Outcome']
-    scaler = StandardScaler()
-    scaler.fit(X)
-    std_data = scaler.transform(X)
-    X = std_data
-    X_train, X_test, Y_train, Y_test = train_test_split(X, Y, test_size=0.2, stratify=Y, random_state=2)
-    classifier = svm.SVC(kernel='linear')
-    classifier.fit(X_train, Y_train)
+    if '' in [Pregnancies, Glucose, BloodPressure, SkinThickness, Insulin, BMI, DiabetesPedigreeFunction, Age]:
+        messagebox.showerror("Error", "Please fill out all input fields.")
+        return
 
-    # Save the trained model
-    save_model(classifier, MODEL_PATH)
-
-    input_data = (Pregnancies, Glucose, BloodPressure, SkinThickness, Insulin, BMI, DiabetesPedigreeFunction, Age)
-    input_data_to_numpy = np.asarray(input_data)
-    input_data_reshaped = input_data_to_numpy.reshape(1, -1)
+    input_data = np.array(
+        [Pregnancies, Glucose, BloodPressure, SkinThickness, Insulin, BMI, DiabetesPedigreeFunction, Age], dtype=float)
+    input_data_reshaped = input_data.reshape(1, -1)
 
     std_data = scaler.transform(input_data_reshaped)
 
-    # Load the saved model
     loaded_classifier = load_model(MODEL_PATH)
 
     Prediction = loaded_classifier.predict(std_data)
 
-    if Prediction[0] == 0:
-        label = Label(d, text='The person is not diabetic', font=("Helvetica", 20), fg='green')
-        label.pack()
-        button = Button(d, text='Predict another', command=lambda: predict(d))
-        button.pack()
-    else:
-        label = Label(d, text='The person is diabetic', font=("Helvetica", 20), fg='red')
-        label.pack()
-        button = Button(d, text='Predict another', command=lambda: predict(d))
-        button.pack()
+    accuracy = accuracy_score(Y_test, loaded_classifier.predict(X_test))
+    print(f"Accuracy: {accuracy}")
 
+    if Prediction[0] == 0:
+        result_text = 'The person is not diabetic'
+        result_color = 'green'
+    else:
+        result_text = 'The person is diabetic'
+        result_color = 'red'
+
+    clear_widgets(d)
+
+    label = Label(d, text=result_text, font=("Helvetica", 20), fg=result_color)
+    label.pack()
+
+    button = Button(d, text='Predict another', command=lambda: predict(d, '', '', '', '', '', '', '', ''))
+    button.pack()
 
 def clear_widgets(window):
     for widget in window.winfo_children():
         widget.destroy()
-
 
 def predict(new):
     clear_widgets(new)
     d = new
     d.title('Predict Diabetes')
 
-    Pregnancies = StringVar()
-    Glucose = StringVar()
-    BloodPressure = StringVar()
-    SkinThickness = StringVar()
-    Insulin = StringVar()
-    BMI = StringVar()
-    DiabetesPedigreeFunction = StringVar()
-    Age = StringVar()
 
-    l1 = Label(d, text='Pregnancies')
-    l1.pack()
+    labels = ['Pregnancies', 'Glucose', 'Blood Pressure', 'Skin Thickness', 'Insulin', 'BMI', 'Diabetes Pedigree Function', 'Age']
+    entries = {}
 
-    entry1 = Entry(d, textvariable=Pregnancies)
-    entry1.pack()
+    for i, label_text in enumerate(labels):
+        label = Label(d, text=label_text)
+        label.pack()
+        entry = Entry(d)
+        entry.pack()
+        entries[label_text] = entry
 
-    l2 = Label(d, text='Glucose')
-    l2.pack()
-
-    entry2 = Entry(d, textvariable=Glucose)
-    entry2.pack()
-
-    l3 = Label(d, text='Blood Pressure')
-    l3.pack()
-
-    entry3 = Entry(d, textvariable=BloodPressure)
-    entry3.pack()
-
-    l4 = Label(d, text='Skin Thickness')
-    l4.pack()
-
-    entry4 = Entry(d, textvariable=SkinThickness)
-    entry4.pack()
-
-    l5 = Label(d, text='Insulin')
-    l5.pack()
-
-    entry5 = Entry(d, textvariable=Insulin)
-    entry5.pack()
-
-    l6 = Label(d, text='BMI')
-    l6.pack()
-
-    entry6 = Entry(d, textvariable=BMI)
-    entry6.pack()
-
-    l7 = Label(d, text='Diabetes Pedigree Function')
-    l7.pack()
-
-    entry7 = Entry(d, textvariable=DiabetesPedigreeFunction)
-    entry7.pack()
-
-    l8 = Label(d, text='Age')
-    l8.pack()
-
-    entry8 = Entry(d, textvariable=Age)
-    entry8.pack()
 
     button = Button(d, text='Predict', fg='Blue', font=("Helvetica", 20),
-                    command=lambda: prediction(d, Pregnancies.get(), Glucose.get(), BloodPressure.get(),
-                                               SkinThickness.get(), Insulin.get(), BMI.get(),
-                                               DiabetesPedigreeFunction.get(), Age.get()))
+                    command=lambda: prediction(d,
+                                               entries['Pregnancies'].get(),
+                                               entries['Glucose'].get(),
+                                               entries['Blood Pressure'].get(),
+                                               entries['Skin Thickness'].get(),
+                                               entries['Insulin'].get(),
+                                               entries['BMI'].get(),
+                                               entries['Diabetes Pedigree Function'].get(),
+                                               entries['Age'].get()))
     button.pack()
-
-    d.mainloop()
-
 
 def main_window():
     new = Tk()
-    new.title('hello')
+    new.title('Diabetes Prediction')
     new.maxsize(600, 600)
     new.minsize(600, 600)
     image = Image.open(IMAGE_PATH)
@@ -155,7 +114,6 @@ def main_window():
     button = Button(new, text='Check Now!', fg='Blue', font=("Helvetica", 20), command=lambda: predict(new))
     button.pack()
     new.mainloop()
-
 
 if __name__ == '__main__':
     main_window()
