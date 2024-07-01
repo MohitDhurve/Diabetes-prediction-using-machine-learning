@@ -108,8 +108,6 @@ def main_window():
     photo = ImageTk.PhotoImage(image)
     label = Label(new, image=photo)
     label.pack()
-    l = Label(new, text='For females only *', fg='red')
-    l.pack()
 
     button = Button(new, text='Check Now!', fg='Blue', font=("Helvetica", 20), command=lambda: predict(new))
     button.pack()
